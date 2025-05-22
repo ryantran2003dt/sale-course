@@ -2,15 +2,14 @@ package com.salecoursecms.controller;
 
 import com.salecoursecms.constant.UrlConst;
 import com.salecoursecms.dto.request.CreateCourseRequest;
+import com.salecoursecms.dto.request.PagingRequest;
+import com.salecoursecms.dto.request.UpdateStatusRequest;
 import com.salecoursecms.service.CourseService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -19,8 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseController {
     private final CourseService courseService;
 
+    @GetMapping(UrlConst.GET_LIST)
+    public ResponseEntity<?> getAllUser(String search, PagingRequest pagingRequest) {
+        return ResponseEntity.ok(courseService.findAllCourse(search, pagingRequest));
+    }
+
     @PostMapping(UrlConst.CREATE)
     public ResponseEntity<?> createCourse(@RequestBody CreateCourseRequest req, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok(courseService.createCourse(req, httpServletRequest));
+    }
+    @PostMapping(UrlConst.UPDATE_STATUS)
+    public ResponseEntity<?> updateStatusCourse(@RequestBody UpdateStatusRequest req) {
+        return ResponseEntity.ok(courseService.updateStatusCourse(req));
     }
 }

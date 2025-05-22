@@ -2,6 +2,7 @@ package com.salecoursecms.constant;
 
 public class MessageConst {
     public MessageConst() {}
+    //Message chung
     public static final String CREATE_SUCCESS = "create.success";
     public static final String UPDATE_SUCCESS = "update.success";
     public static final String UPDATE_FAIL = "update.fail";
@@ -10,6 +11,8 @@ public class MessageConst {
     public static final String GET_DATA_FAIL = "get.data.fail";
     //Role
     public static final String ROLE_NOT_FOUND = "role.not.found";
+    //Course
+    public static final String COURSE_NOT_FOUND = "course.not.found";
     //USER
     public static final String ACCOUNT_NOT_FOUND = "account.not.found";
     //AUTH

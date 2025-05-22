@@ -32,6 +32,8 @@ public class CourseEntity {
     private String image;
     @Column(name = "NUMBER_OF_SESSION")
     private int numberOfSession;
+    @Column(name = "START_DATE")
+    private Date startDate;
     @Column(name = "CREATE_DATE")
     private Date createDate;
     @Column(name = "UPDATE_DATE")
@@ -44,4 +46,8 @@ public class CourseEntity {
     private Long teacherId;
     @Column(name = "STATUS")
     private int status; // 0 init, 1 approve, 2 inject, 3 delete
+    @Column(name = "DAYS_OF_WEEK")
+    private String daysOfWeek;
+    @Column(name = "SESSION_TYPE")
+    private int sessionType; //1 online, 2 offline
 }

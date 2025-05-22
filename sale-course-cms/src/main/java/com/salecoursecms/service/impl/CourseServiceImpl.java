@@ -4,21 +4,29 @@ import com.salecoursecms.config.security.service.JwtService;
 import com.salecoursecms.constant.AppConst;
 import com.salecoursecms.constant.MessageConst;
 import com.salecoursecms.constant.VariableConst;
-import com.salecoursecms.dto.reponse.BaseReponse;
-import com.salecoursecms.dto.reponse.CourseReponse;
+import com.salecoursecms.dto.reponse.*;
 import com.salecoursecms.dto.request.CreateCourseRequest;
+import com.salecoursecms.dto.request.PagingRequest;
+import com.salecoursecms.dto.request.UpdateStatusRequest;
 import com.salecoursecms.entity.first.CourseEntity;
+import com.salecoursecms.entity.first.CourseSessionEntity;
 import com.salecoursecms.exception.ResourceNotFoundException;
 import com.salecoursecms.mapper.CourseMapper;
+import com.salecoursecms.mapper.PagingMapper;
 import com.salecoursecms.repository.first.CourseRepository;
 import com.salecoursecms.repository.first.UserRepository;
 import com.salecoursecms.service.CourseService;
+import com.salecoursecms.service.CourseSessionService;
+import com.salecoursecms.utils.PageableInit;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -30,6 +38,23 @@ public class CourseServiceImpl implements CourseService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final MessageSource messageSource;
+    private final PagingMapper pagingMapper;
+    private final CourseSessionService courseSessionService;
+
+    @Override
+    public BaseReponse<?> findAllCourse(String search, PagingRequest pagingRequest){
+        try{
+            Pageable pageable = PageableInit.getPageable(pagingRequest);
+            Page<CourseEntity> courseEntityPage = courseRepository.findAllWithPagin(search,pageable);
+
+            PagingResponse pagingResponse = pagingMapper.createPagingResponse(courseEntityPage.getTotalPages(), courseEntityPage.getNumber(), courseEntityPage.getSize());
+
+            return new BaseReponse<>(AppConst.STATUS_SUCCESS,false,messageSource.getMessage(MessageConst.GET_DATA_SUCCESS, null,new Locale(VariableConst.LAN)),pagingResponse,courseEntityPage.getContent());
+        }catch (Exception e){
+            log.error("[ERROR] "+e.getMessage());
+            return new BaseReponse<>(AppConst.STATUS_SUCCESS,true,messageSource.getMessage(MessageConst.GET_DATA_FAIL, null,new Locale(VariableConst.LAN)),null);
+        }
+    }
 
     @Override
     public BaseReponse<?> createCourse(CreateCourseRequest req, HttpServletRequest httpServletRequest) {
@@ -51,7 +76,32 @@ public class CourseServiceImpl implements CourseService {
             log.error("[ERRRO] "+e.getMessage());
             return new BaseReponse<>(AppConst.STATUS_FAIL,false,messageSource.getMessage(MessageConst.CREATE_FAIL, null,new Locale(VariableConst.LAN)),null);
         }
-
     }
+
+    @Override
+    public BaseReponse<?> updateStatusCourse(UpdateStatusRequest req){
+        try{
+            CourseDetailReponse reponse = null;
+            CourseEntity courseEntity = courseRepository.findById(req.getId()).orElse(null);
+            if(courseEntity == null) {
+                throw new ResourceNotFoundException(MessageConst.COURSE_NOT_FOUND);
+            }
+            courseEntity.setStatus(req.getStatus());
+            courseRepository.save(courseEntity);
+            if(req.getStatus() == 1){
+                List<CourseSessionReponse> courseSessionEntities = courseSessionService.generatorCourseSession(courseEntity);
+
+                reponse = courseMapper.toDetailReponse(courseEntity,courseSessionEntities);
+            }
+            return new BaseReponse<>(AppConst.STATUS_SUCCESS,false,messageSource.getMessage(MessageConst.UPDATE_SUCCESS, null,new Locale(VariableConst.LAN)),reponse);
+        }catch (Exception e) {
+            log.error("[ERROR] "+e.getMessage());
+            return new BaseReponse<>(AppConst.STATUS_FAIL,false,messageSource.getMessage(MessageConst.UPDATE_FAIL, null,new Locale(VariableConst.LAN)),null);
+        }
+    }
+
+//    public BaseReponse<?> updateCourse(){
+//
+//    }
 
 }

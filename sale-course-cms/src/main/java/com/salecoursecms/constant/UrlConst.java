@@ -6,7 +6,7 @@ public class UrlConst {
     public static final String UPDATE = "/update";
     public static final String GET_LIST = "/list";
     public static final String GET_BY_ID = "/get-by-id";
-    public static final String UPDATE_STATUS = "/upadte-status";
+    public static final String UPDATE_STATUS = "/update-status";
     //AUTH
     public static final String AUTH = "/auth";
     public static final String LOGIN = "/login";

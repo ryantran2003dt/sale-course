@@ -31,8 +31,6 @@ public class CourseSessionEntity {
     private String description;
     @Column(name = "SESSION_DATE")
     private Date sessionDate;
-    @Column(name = "STAR_DATE")
-    private Timestamp starDate;
     @Column(name = "SESSION_TYPE")
     private String sessionType; // ONLINE, OFFLINE
     @Column(name = "LOCATION")
@@ -42,5 +40,5 @@ public class CourseSessionEntity {
     @Column(name = "UPDATE_DATE")
     private Date updateDate;
     @Column(name = "STATUS")
-    private String status;
+    private int status;
 }

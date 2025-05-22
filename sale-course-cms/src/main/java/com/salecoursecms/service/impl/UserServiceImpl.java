@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final MessageSource messageSource;
     private final PagingMapper pagingMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -56,6 +58,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public BaseReponse<?> createUser(CreateUserRequest req) {
         try{
+            String password = passwordEncoder.encode(req.getPassword());
+            req.setPassword(password);
             UserEntity userEntity = userMapper.toUserEntity(req);
             userRepository.save(userEntity);
             return new BaseReponse<>(AppConst.STATUS_SUCCESS,false,messageSource.getMessage(MessageConst.CREATE_SUCCESS, null,new Locale(VariableConst.LAN)),userEntity);
