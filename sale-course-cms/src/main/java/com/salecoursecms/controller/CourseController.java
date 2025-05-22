@@ -3,6 +3,7 @@ package com.salecoursecms.controller;
 import com.salecoursecms.constant.UrlConst;
 import com.salecoursecms.dto.request.CreateCourseRequest;
 import com.salecoursecms.dto.request.PagingRequest;
+import com.salecoursecms.dto.request.UpdateCourseRequest;
 import com.salecoursecms.dto.request.UpdateStatusRequest;
 import com.salecoursecms.service.CourseService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,5 +31,9 @@ public class CourseController {
     @PostMapping(UrlConst.UPDATE_STATUS)
     public ResponseEntity<?> updateStatusCourse(@RequestBody UpdateStatusRequest req) {
         return ResponseEntity.ok(courseService.updateStatusCourse(req));
+    }
+    @PostMapping(UrlConst.UPDATE)
+    public ResponseEntity<?> updateCourse(@RequestBody UpdateCourseRequest req, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(courseService.updateCourse(req,httpServletRequest));
     }
 }

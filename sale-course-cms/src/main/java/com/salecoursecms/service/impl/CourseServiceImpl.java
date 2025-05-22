@@ -7,6 +7,7 @@ import com.salecoursecms.constant.VariableConst;
 import com.salecoursecms.dto.reponse.*;
 import com.salecoursecms.dto.request.CreateCourseRequest;
 import com.salecoursecms.dto.request.PagingRequest;
+import com.salecoursecms.dto.request.UpdateCourseRequest;
 import com.salecoursecms.dto.request.UpdateStatusRequest;
 import com.salecoursecms.entity.first.CourseEntity;
 import com.salecoursecms.entity.first.CourseSessionEntity;
@@ -14,6 +15,7 @@ import com.salecoursecms.exception.ResourceNotFoundException;
 import com.salecoursecms.mapper.CourseMapper;
 import com.salecoursecms.mapper.PagingMapper;
 import com.salecoursecms.repository.first.CourseRepository;
+import com.salecoursecms.repository.first.CourseSessionRepository;
 import com.salecoursecms.repository.first.UserRepository;
 import com.salecoursecms.service.CourseService;
 import com.salecoursecms.service.CourseSessionService;
@@ -40,6 +42,7 @@ public class CourseServiceImpl implements CourseService {
     private final MessageSource messageSource;
     private final PagingMapper pagingMapper;
     private final CourseSessionService courseSessionService;
+    private final CourseSessionRepository courseSessionRepository;
 
     @Override
     public BaseReponse<?> findAllCourse(String search, PagingRequest pagingRequest){
@@ -100,8 +103,26 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-//    public BaseReponse<?> updateCourse(){
-//
-//    }
+    @Override
+    public BaseReponse<?> updateCourse(UpdateCourseRequest req, HttpServletRequest httpServletRequest) {
+        try{
+            String authorizationHeader = httpServletRequest.getHeader("Authorization");
+
+            String accessToken = authorizationHeader.substring(7);
+
+            req.setUpdateBy(jwtService.extractIdFromToken(accessToken));
+
+            CourseEntity courseEntity = courseMapper.toUpdateCourse(req);
+
+            courseSessionRepository.deleteCourseSessionByCourseId(req.getId());
+
+            CourseReponse reponse = courseMapper.toReponse(courseEntity);
+
+            return new BaseReponse<>(AppConst.STATUS_SUCCESS,false,messageSource.getMessage(MessageConst.UPDATE_SUCCESS, null,new Locale(VariableConst.LAN)),reponse);
+        }catch (Exception e) {
+            log.error("[ERROR] "+e.getMessage());
+            return new BaseReponse<>(AppConst.STATUS_FAIL,false,messageSource.getMessage(MessageConst.UPDATE_FAIL, null,new Locale(VariableConst.LAN)),null);
+        }
+    }
 
 }

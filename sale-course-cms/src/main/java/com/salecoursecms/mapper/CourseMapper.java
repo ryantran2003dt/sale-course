@@ -1,10 +1,15 @@
 package com.salecoursecms.mapper;
 
+import com.salecoursecms.constant.MessageConst;
 import com.salecoursecms.dto.reponse.CourseDetailReponse;
 import com.salecoursecms.dto.reponse.CourseReponse;
 import com.salecoursecms.dto.reponse.CourseSessionReponse;
 import com.salecoursecms.dto.request.CreateCourseRequest;
+import com.salecoursecms.dto.request.UpdateCourseRequest;
 import com.salecoursecms.entity.first.CourseEntity;
+import com.salecoursecms.exception.ResourceNotFoundException;
+import com.salecoursecms.exception.SystemErrorException;
+import com.salecoursecms.repository.first.CourseRepository;
 import com.salecoursecms.utils.CourseScheduleUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,6 +20,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class CourseMapper {
+    private final CourseRepository courseRepository;
     public CourseEntity toCreateCourse(CreateCourseRequest req) {
         CourseEntity course = new CourseEntity();
         course.setNameCourse(req.getNameCourse());
@@ -58,5 +64,26 @@ public class CourseMapper {
         courseDetailReponse.setTeacherId(course.getTeacherId());
         courseDetailReponse.setSessions(courseSessionReponses);
         return courseDetailReponse;
+    }
+    public CourseEntity toUpdateCourse(UpdateCourseRequest req) {
+        CourseEntity course = courseRepository.findById(req.getId()).orElse(null);
+        Date currentDate = new Date();
+        if (course == null){
+            throw new ResourceNotFoundException(MessageConst.ACCOUNT_NOT_FOUND);
+        }if (course.getStartDate().after(currentDate)) {
+            throw new SystemErrorException(MessageConst.INTERNAL_SERVER_ERROR);
+        }
+        course.setNameCourse(req.getNameCourse());
+        course.setDescription(req.getDescription());
+        course.setPrice(req.getPrice());
+        course.setImage(req.getImage());
+        course.setStartDate(req.getStartDate());
+        course.setNumberOfSession(req.getNumberOfSession());
+        course.setUpdateDate(new Date());
+        course.setStatus(req.getStatus());
+        course.setTeacherId(req.getTeacherId());
+        course.setSessionType(req.getSessionType());
+        course.setDaysOfWeek(CourseScheduleUtils.joinDays(req.getDaysOfWeek()));
+        return course;
     }
 }
