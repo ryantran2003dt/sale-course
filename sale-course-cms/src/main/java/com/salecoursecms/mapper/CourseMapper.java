@@ -36,6 +36,7 @@ public class CourseMapper {
         course.setTeacherId(req.getTeacherId());
         course.setStatus(req.getStatus());
         course.setSessionType(req.getSessionType());
+        course.setStartTimeMinute(req.getStartTimeMinute());
         course.setDaysOfWeek(CourseScheduleUtils.joinDays(req.getDaysOfWeek()));
         return course;
     }
@@ -86,6 +87,7 @@ public class CourseMapper {
         course.setStatus(req.getStatus());
         course.setTeacherId(req.getTeacherId());
         course.setSessionType(req.getSessionType());
+        course.setStartTimeMinute(req.getStartTimeMinute());
         course.setDaysOfWeek(CourseScheduleUtils.joinDays(req.getDaysOfWeek()));
         courseRepository.save(course);
         return course;

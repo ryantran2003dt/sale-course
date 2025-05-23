@@ -50,4 +50,7 @@ public class CourseEntity {
     private String daysOfWeek;
     @Column(name = "SESSION_TYPE")
     private int sessionType; //1 online, 2 offline
+    @Column(name = "START_TIME_MINUTE")
+    private int startTimeMinute; // Số phút tính từ 00:00
+
 }

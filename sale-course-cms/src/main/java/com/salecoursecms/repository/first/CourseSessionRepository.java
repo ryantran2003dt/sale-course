@@ -19,7 +19,7 @@ public interface CourseSessionRepository extends JpaRepository<CourseSessionEnti
     @Query(value = "DELETE FROM SC_COURSE_SESSION WHERE COURSE_ID = :courseId", nativeQuery = true)
     void deleteCourseSessionByCourseId(@Param("courseId") Long courseId);
 
-    @Query("select c from CourseSessionEntity c where c.courseId =: courseId and c.status = 1 ")
+    @Query("select c from CourseSessionEntity c where c.courseId = :courseId and c.status = 1 ")
     List<CourseSessionEntity> findByCourseId(@Param("courseId") Long courseId);
 
 }

@@ -37,4 +37,9 @@ public class CourseController {
         log.info("request: "+req);
         return ResponseEntity.ok(courseService.updateCourse(req,httpServletRequest));
     }
+    @PostMapping(UrlConst.GET_BY_ID)
+    public ResponseEntity<?> getUserById(@RequestBody UpdateStatusRequest request){
+        log.info("+++++++++++++++"+request.getId());
+        return ResponseEntity.ok(courseService.findCourseById(request.getId()));
+    }
 }

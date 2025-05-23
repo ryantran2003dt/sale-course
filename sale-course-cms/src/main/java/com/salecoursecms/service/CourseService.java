@@ -12,4 +12,5 @@ public interface CourseService {
     BaseReponse<?> findAllCourse(String search, PagingRequest pagingRequest);
     BaseReponse<?> updateStatusCourse(UpdateStatusRequest req);
     BaseReponse<?> updateCourse(UpdateCourseRequest req, HttpServletRequest httpServletRequest);
+    BaseReponse<?> findCourseById(Long id);
 }

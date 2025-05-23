@@ -130,12 +130,16 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
+    @Override
     public BaseReponse<?> findCourseById(Long id){
         try{
+
             CourseEntity courseEntity = courseRepository.findById(id).orElse(null);
             if(courseEntity == null){
                 throw new ResourceNotFoundException(MessageConst.COURSE_NOT_FOUND);
             }
+            log.info("++++++++++++"+courseEntity.getId());
+            log.info("++++++++++++"+courseEntity.getNameCourse());
             List<CourseSessionEntity> courseSessionEntity = courseSessionRepository.findByCourseId(id);
             List<CourseSessionReponse> courseSessionReponses = courseSessionMapper.toReponseList(courseSessionEntity);
             CourseDetailReponse res = courseMapper.toDetailReponse(courseEntity,courseSessionReponses);

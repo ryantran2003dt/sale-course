@@ -21,5 +21,6 @@ public class CreateCourseRequest {
     private Long teacherId;
     private int sessionType;
     private int status = 0; // 0 init, 1 approve, 2 inject, 3 delete
+    private int startTimeMinute;
     private List<String> daysOfWeek;
 }
