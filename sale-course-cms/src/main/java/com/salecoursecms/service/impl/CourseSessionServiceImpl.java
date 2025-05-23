@@ -79,20 +79,20 @@ public class CourseSessionServiceImpl implements CourseSessionService {
                 LocalDateTime sessionDateTime = current.atStartOfDay().plusMinutes(startMinute);
                 Date sessionDateWithTime = Date.from(sessionDateTime.atZone(ZoneId.systemDefault()).toInstant());
 
-                // Tạo một đối tượng CourseSessionEntity cho buổi học
+
                 CourseSessionEntity session = new CourseSessionEntity();
-                session.setSessionDate(sessionDateWithTime); // Ngày học
-                session.setCourseId(courseEntity.getId());              // ID khóa học
-                session.setCreateDate(new Date());                      // Ngày tạo bản ghi
-                session.setStatus(1);                                   // Trạng thái (1 = hoạt động)
+                session.setSessionDate(sessionDateWithTime);
+                session.setCourseId(courseEntity.getId());
+                session.setCreateDate(new Date());
+                session.setStatus(1);
 
-                session.setTitle("Session " + (sessionCount + 1));      // Tiêu đề (ví dụ: "Session 1")
-                session.setDescription("");                             // Mô tả để trống
-                session.setLocation("");                                // Vị trí để trống (nếu cần bổ sung sau)
-                session.setSessionType(sessionType);                    // Loại buổi học
+                session.setTitle("Session " + (sessionCount + 1));
+                session.setDescription("");
+                session.setLocation("");
+                session.setSessionType(sessionType);
 
-                courseSessionList.add(session); // Thêm vào danh sách
-                sessionCount++;                 // Tăng số buổi đã tạo
+                courseSessionList.add(session);
+                sessionCount++;
 
                 current = current.plusDays(1);  // Chuyển sang ngày tiếp theo
             }
