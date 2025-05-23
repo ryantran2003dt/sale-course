@@ -13,6 +13,7 @@ import com.salecoursecms.entity.first.CourseEntity;
 import com.salecoursecms.entity.first.CourseSessionEntity;
 import com.salecoursecms.exception.ResourceNotFoundException;
 import com.salecoursecms.mapper.CourseMapper;
+import com.salecoursecms.mapper.CourseSessionMapper;
 import com.salecoursecms.mapper.PagingMapper;
 import com.salecoursecms.repository.first.CourseRepository;
 import com.salecoursecms.repository.first.CourseSessionRepository;
@@ -43,6 +44,7 @@ public class CourseServiceImpl implements CourseService {
     private final PagingMapper pagingMapper;
     private final CourseSessionService courseSessionService;
     private final CourseSessionRepository courseSessionRepository;
+    private final CourseSessionMapper courseSessionMapper;
 
     @Override
     public BaseReponse<?> findAllCourse(String search, PagingRequest pagingRequest){
@@ -55,7 +57,7 @@ public class CourseServiceImpl implements CourseService {
             return new BaseReponse<>(AppConst.STATUS_SUCCESS,false,messageSource.getMessage(MessageConst.GET_DATA_SUCCESS, null,new Locale(VariableConst.LAN)),pagingResponse,courseEntityPage.getContent());
         }catch (Exception e){
             log.error("[ERROR] "+e.getMessage());
-            return new BaseReponse<>(AppConst.STATUS_SUCCESS,true,messageSource.getMessage(MessageConst.GET_DATA_FAIL, null,new Locale(VariableConst.LAN)),null);
+            return new BaseReponse<>(AppConst.STATUS_FAIL,true,messageSource.getMessage(MessageConst.GET_DATA_FAIL, null,new Locale(VariableConst.LAN)),null);
         }
     }
 
@@ -112,9 +114,12 @@ public class CourseServiceImpl implements CourseService {
 
             req.setUpdateBy(jwtService.extractIdFromToken(accessToken));
 
+
             CourseEntity courseEntity = courseMapper.toUpdateCourse(req);
 
-            courseSessionRepository.deleteCourseSessionByCourseId(req.getId());
+            if(courseEntity.getStatus() !=0){
+                courseSessionRepository.deleteCourseSessionByCourseId(req.getId());
+            }
 
             CourseReponse reponse = courseMapper.toReponse(courseEntity);
 
@@ -122,6 +127,23 @@ public class CourseServiceImpl implements CourseService {
         }catch (Exception e) {
             log.error("[ERROR] "+e.getMessage());
             return new BaseReponse<>(AppConst.STATUS_FAIL,false,messageSource.getMessage(MessageConst.UPDATE_FAIL, null,new Locale(VariableConst.LAN)),null);
+        }
+    }
+
+    public BaseReponse<?> findCourseById(Long id){
+        try{
+            CourseEntity courseEntity = courseRepository.findById(id).orElse(null);
+            if(courseEntity == null){
+                throw new ResourceNotFoundException(MessageConst.COURSE_NOT_FOUND);
+            }
+            List<CourseSessionEntity> courseSessionEntity = courseSessionRepository.findByCourseId(id);
+            List<CourseSessionReponse> courseSessionReponses = courseSessionMapper.toReponseList(courseSessionEntity);
+            CourseDetailReponse res = courseMapper.toDetailReponse(courseEntity,courseSessionReponses);
+            return new BaseReponse<>(AppConst.STATUS_SUCCESS,false,messageSource.getMessage(MessageConst.GET_DATA_SUCCESS, null,new Locale(VariableConst.LAN)),res);
+
+        }catch (Exception e){
+            log.error("[ERROR] "+e.getMessage());
+            return new BaseReponse<>(AppConst.STATUS_FAIL,true,messageSource.getMessage(MessageConst.GET_DATA_FAIL, null,new Locale(VariableConst.LAN)),null);
         }
     }
 

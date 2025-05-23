@@ -12,6 +12,7 @@ import com.salecoursecms.exception.SystemErrorException;
 import com.salecoursecms.repository.first.CourseRepository;
 import com.salecoursecms.utils.CourseScheduleUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CourseMapper {
     private final CourseRepository courseRepository;
     public CourseEntity toCreateCourse(CreateCourseRequest req) {
@@ -67,11 +69,12 @@ public class CourseMapper {
     }
     public CourseEntity toUpdateCourse(UpdateCourseRequest req) {
         CourseEntity course = courseRepository.findById(req.getId()).orElse(null);
+        log.info("numberOfSession: "+req.getNumberOfSession());
         Date currentDate = new Date();
         if (course == null){
             throw new ResourceNotFoundException(MessageConst.ACCOUNT_NOT_FOUND);
-        }if (course.getStartDate().after(currentDate)) {
-            throw new SystemErrorException(MessageConst.INTERNAL_SERVER_ERROR);
+        }if (course.getStartDate().before(currentDate)) {
+            throw new SystemErrorException(MessageConst.TIME_EXPIRED);
         }
         course.setNameCourse(req.getNameCourse());
         course.setDescription(req.getDescription());
@@ -84,6 +87,7 @@ public class CourseMapper {
         course.setTeacherId(req.getTeacherId());
         course.setSessionType(req.getSessionType());
         course.setDaysOfWeek(CourseScheduleUtils.joinDays(req.getDaysOfWeek()));
+        courseRepository.save(course);
         return course;
     }
 }

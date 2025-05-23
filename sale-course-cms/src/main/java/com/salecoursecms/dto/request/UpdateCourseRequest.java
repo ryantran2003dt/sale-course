@@ -20,6 +20,6 @@ public class UpdateCourseRequest {
     private Long updateBy;
     private Long teacherId;
     private int status = 0; // 0 init, 1 approve, 2 inject, 3 delete
-    private Integer sessionType; //1 online, 2 offline
+    private int sessionType; //1 online, 2 offline
     private List<String> daysOfWeek;
 }

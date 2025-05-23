@@ -9,6 +9,7 @@ public class MessageConst {
     public static final String CREATE_FAIL = "create.fail";
     public static final String GET_DATA_SUCCESS = "get.data.success";
     public static final String GET_DATA_FAIL = "get.data.fail";
+    public static final String TIME_EXPIRED = "time.expired";
     //Role
     public static final String ROLE_NOT_FOUND = "role.not.found";
     //Course

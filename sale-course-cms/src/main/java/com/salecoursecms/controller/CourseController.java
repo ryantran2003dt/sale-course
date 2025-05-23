@@ -34,6 +34,7 @@ public class CourseController {
     }
     @PostMapping(UrlConst.UPDATE)
     public ResponseEntity<?> updateCourse(@RequestBody UpdateCourseRequest req, HttpServletRequest httpServletRequest) {
+        log.info("request: "+req);
         return ResponseEntity.ok(courseService.updateCourse(req,httpServletRequest));
     }
 }
